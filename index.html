@@ -78,6 +78,9 @@
             color: var(--white); margin-bottom: 25px; text-transform: uppercase; font-weight: 600;
         }
         .btn-start {
+            display: inline-flex;
+    align-items: center;
+    gap: 8px;
             padding: 12px 35px; background: transparent; border: 2px solid var(--red-race);
             color: var(--red-race); font-family: var(--font-sub); font-size: 16px;
             cursor: pointer; transition: 0.3s; letter-spacing: 2px; text-transform: uppercase; font-weight: 600;
@@ -173,7 +176,9 @@
         </div>
         <p class="cover-event">BIRTHDAY PARTY</p>
         
-        <button class="btn-start" id="btnOpen">BUKA UNDANGAN</button>
+        <button class="btn-start" id="btnOpen">
+    <i class="fas fa-flag-checkered"></i> BUKA UNDANGAN
+</button>
     </div>
 
     <!-- AUDIO: Autoplay + Muted (bypass policy) → Unmute saat klik cover -->
