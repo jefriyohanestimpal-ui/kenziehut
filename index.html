@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Kenzie - 1st Birthday Offroad Party</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Black+Ops+One&family=Oswald:wght@400;600;700&family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-dark: #030303;
+            --red-race: #e60000;
+            --white: #ffffff;
+            --font-title: 'Black Ops One', cursive;
+            --font-sub: 'Oswald', sans-serif;
+            --font-body: 'Montserrat', sans-serif;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body { 
+            font-family: var(--font-body); 
+            background: var(--bg-dark); 
+            color: var(--white); 
+            overflow-x: hidden;
+            background-image: radial-gradient(circle at 50% 0%, #1a0000 0%, #030303 65%);
+            -webkit-font-smoothing: antialiased;
+            text-rendering: optimizeLegibility;
+        }
+        body.no-scroll { overflow: hidden; }
+
+        /* COVER LAYOUT FIX: Agar tidak terpotong di HP kecil */
+        .cover {
+            position: fixed; inset: 0; background: #000;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            z-index: 9999; transition: opacity 0.8s ease, transform 0.8s ease;
+            text-align: center; padding: 15px;
+            min-height: 100vh; 
+            overflow-y: auto; /* Scroll aman jika layar sangat kecil */
+            -webkit-overflow-scrolling: touch;
+        }
+        .cover.open { opacity: 0; pointer-events: none; transform: scale(1.05); }
+
+        .cover-top { font-family: var(--font-sub); font-size: 14px; letter-spacing: 4px; color: var(--white); margin-bottom: 5px; font-weight: 600; }
+        .cover-engines { font-family: var(--font-title); font-size: clamp(2rem, 8vw, 3.5rem); color: var(--red-race); 
+                        text-shadow: 0 0 10px rgba(230, 0, 0, 0.5); margin-bottom: 10px; letter-spacing: 2px; }
+
+        @keyframes fadeInZoom {
+            0% { opacity: 0; transform: scale(0.85); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+
+        .cover-photo-frame {
+            width: 85%; max-width: 300px; aspect-ratio: 4/3; margin: 0 auto 12px;
+            border: 3px solid var(--red-race); border-radius: 16px; overflow: hidden;
+            box-shadow: 0 0 20px rgba(230, 0, 0, 0.3); position: relative;
+            opacity: 0; animation: fadeInZoom 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+            flex-shrink: 0;
+        }
+        .cover-photo-frame img { width: 100%; height: 100%; object-fit: cover; display: block; }
+        .cover-photo-frame::after {
+            content: ''; position: absolute; inset: 0;
+            background: linear-gradient(180deg, transparent 60%, rgba(0,0,0,0.6));
+        }
+
+        .cover-name { font-family: var(--font-title); font-size: clamp(3rem, 12vw, 5rem); color: var(--red-race); line-height: 1; margin-bottom: 4px; }
+        
+        /* EZEKIEL: Font sama, 1 baris, margin diperkecil */
+        .cover-fullname { 
+            font-family: var(--font-title); 
+            font-size: clamp(0.7rem, 2.5vw, 0.85rem); 
+            letter-spacing: 2px; color: var(--white); 
+            margin-bottom: 6px; text-transform: uppercase; font-weight: 600;
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%;
+        }
+
+        /* IS TURNING + 1: Margin diperkecil agar BIRTHDAY PARTY menempel ke angka 1 */
+        .cover-age-stack { display: flex; flex-direction: column; align-items: center; margin-bottom: 4px; }
+        .cover-age-stack p { font-family: var(--font-sub); font-size: 1.2rem; color: var(--white); font-weight: 600; margin: 0; line-height: 1; }
+        .cover-age-num { font-family: var(--font-title); font-size: clamp(3.5rem, 14vw, 6rem); color: var(--red-race); line-height: 1; }
+
+        /* BIRTHDAY PARTY: Margin diperkecil */
+        .cover-event { font-family: var(--font-sub); font-size: 0.95rem; letter-spacing: 4px; color: var(--white); margin-bottom: 10px; text-transform: uppercase; font-weight: 600; }
+        
+        .cover-to { font-family: var(--font-sub); font-size: 1.05rem; color: #aaa; margin-bottom: 12px; line-height: 1.5; }
+        #guestName { 
+            color: var(--white); font-family: 'Vivaldi Italic', cursive; 
+            font-size: 1.5rem; display: block; margin-top: 4px; 
+        }
+
+        /* TOMBOL BUKA UNDANGAN: FIX RESPONSIF & TIDAK TERPOTONG */
+        .btn-start {
+            padding: 14px 35px; min-height: 48px; background: transparent; border: 2px solid var(--red-race);
+            color: var(--red-race); font-family: var(--font-sub); font-size: 16px;
+            cursor: pointer; transition: 0.3s; letter-spacing: 2px; text-transform: uppercase; font-weight: 600;
+            display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+            touch-action: manipulation; -webkit-tap-highlight-color: transparent;
+            position: relative; z-index: 10000; user-select: none;
+        }
+        .btn-start:hover { background: var(--red-race); color: var(--white); box-shadow: 0 0 20px rgba(230,0,0,0.5); }
+        .btn-start:active { transform: scale(0.98); }
+
+        /* MAIN SECTIONS */
+        .container { max-width: 800px; margin: 0 auto; padding: 0 20px; position: relative; z-index: 2; }
+        section { padding: 30px 0; text-align: center; } 
+        .hero { padding-bottom: 0px; }
+        .gallery { padding-top: 10px; }
+
+        .section-title { font-family: var(--font-title); font-size: clamp(1.5rem, 5vw, 2.2rem); text-transform: uppercase; margin-bottom: 10px; color: var(--white); }
+        .race-line { height: 3px; width: 60px; background: var(--red-race); margin: 0 auto 20px; border-radius: 2px; box-shadow: 0 0 8px var(--red-race); }
+        
+        .hero-name { 
+            font-family: var(--font-title); font-size: clamp(3rem, 12vw, 5rem); 
+            color: var(--red-race); line-height: 1.1; margin-bottom: 0px;
+            text-shadow: 0 0 15px rgba(255,255,255,0.8);
+        }
+
+        .gallery-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; margin-top: 15px;
+        }
+        .gallery-card {
+            padding: 10px; background: #111; border-radius: 20px; border: 2px solid var(--red-race);
+            box-shadow: 0 0 25px rgba(230, 0, 0, 0.1);
+            opacity: 0; animation: fadeInZoom 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+            animation-delay: 0.6s;
+        }
+        .gallery-card img { width: 100%; border-radius: 14px; display: block; aspect-ratio: 4/5; object-fit: cover; }
+
+        .details-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 30px; }
+        .detail-box { background: #0a0a0a; padding: 25px; border-radius: 16px; border: 1px solid #222; position: relative; }
+        .detail-box::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 3px; background: var(--red-race); border-radius: 3px 3px 0 0; }
+        .detail-icon { font-size: 22px; color: var(--red-race); margin-bottom: 10px; }
+        .detail-title { font-family: var(--font-sub); font-size: 1.1rem; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px; color: var(--white); }
+        .detail-text { color: var(--white); font-size: 14px; line-height: 1.6; }
+        .detail-highlight { color: var(--white); font-weight: 700; font-size: 16px; display: block; margin-bottom: 5px; }
+        .map-container { margin-top: 15px; border-radius: 12px; overflow: hidden; border: 1px solid var(--red-race); box-shadow: 0 4px 15px rgba(230,0,0,0.15); }
+        .map-container iframe { width: 100%; height: 250px; border: 0; display: block; }
+
+        .cd-grid { display: flex; justify-content: center; gap: 10px; margin-top: 20px; }
+        .cd-box { background: #080808; padding: 10px; border-radius: 8px; min-width: 60px; border: 1px solid #222; }
+        .cd-num { display: block; font-family: var(--font-sub); font-size: 1.4rem; color: var(--red-race); font-weight: 700; }
+        .cd-label { font-size: 10px; color: var(--white); text-transform: uppercase; letter-spacing: 1px; opacity: 0.7; }
+
+        .footer { padding: 40px 20px; border-top: 1px solid #1a1a1a; color: var(--white); font-size: 13px; }
+        .footer-quote { font-family: var(--font-sub); color: var(--red-race); font-size: 1.1rem; margin-bottom: 8px; letter-spacing: 2px; font-weight: 600; }
+
+        @media (max-width: 600px) { 
+            .details-grid { grid-template-columns: 1fr; } 
+            .cover-photo-frame { width: 90%; } 
+            .map-container iframe { height: 200px; } 
+            .cover { padding-bottom: 35px; } /* Jaminan tombol tidak mepet bawah di HP */
+        }
+    </style>
+</head>
+<body>
+
+    <div class="cover" id="cover">
+        <p class="cover-top">START YOUR</p>
+        <h1 class="cover-engines">ENGINES</h1>
+        
+        <div class="cover-photo-frame">
+            <img src="cover.jpg" alt="Kenzie">
+        </div>
+
+        <h2 class="cover-name">KENZIE</h2>
+        <p class="cover-fullname">EZEKIEL SORONGAN PARANSI</p>
+        
+        <div class="cover-age-stack">
+            <p>IS TURNING</p>
+            <span class="cover-age-num">1</span>
+        </div>
+        
+        <p class="cover-event">BIRTHDAY PARTY</p>
+        <p class="cover-to">Kepada Yth.<br><span id="guestName">Tamu Spesial</span></p>
+        <button class="btn-start" id="btnOpen"><i class="fas fa-flag-checkered"></i> BUKA UNDANGAN</button>
+    </div>
+
+    <audio id="bgMusic" loop autoplay muted playsinline><source src="musik.mp3" type="audio/mpeg"></audio>
+
+    <main id="mainContent" style="opacity:0; transition: opacity 0.8s ease;">
+        <section class="hero">
+            <div class="container">
+                <h1 class="hero-name">KENZIE</h1>
+            </div>
+        </section>
+
+        <section class="gallery">
+            <div class="container">
+                <h2 class="section-title">TRACK MOMENT</h2>
+                <div class="race-line"></div>
+                <div class="gallery-grid">
+                    <div class="gallery-card"><img src="foto1.jpg" alt="Momen 1"></div>
+                    <div class="gallery-card"><img src="foto2.jpg" alt="Momen 2"></div>
+                </div>
+            </div>
+        </section>
+
+        <section class="details">
+            <div class="container">
+                <h2 class="section-title">SAVE THE DATE</h2><div class="race-line"></div>
+                <div class="details-grid">
+                    <div class="detail-box">
+                        <div class="detail-icon"><i class="fas fa-flag-checkered"></i></div>
+                        <div class="detail-title">DATE & TIME</div>
+                        <span class="detail-highlight">5 SEPTEMBER 2026</span>
+                        <p class="detail-text">SATURDAY • 03:00 PM</p>
+                        <div class="cd-grid">
+                            <div class="cd-box"><span class="cd-num" id="d">00</span><span class="cd-label">Days</span></div>
+                            <div class="cd-box"><span class="cd-num" id="h">00</span><span class="cd-label">Hrs</span></div>
+                            <div class="cd-box"><span class="cd-num" id="m">00</span><span class="cd-label">Min</span></div>
+                            <div class="cd-box"><span class="cd-num" id="s">00</span><span class="cd-label">Sec</span></div>
+                        </div>
+                    </div>
+                    <div class="detail-box">
+                        <div class="detail-icon"><i class="fas fa-location-dot"></i></div>
+                        <div class="detail-title">LOCATION</div>
+                        <span class="detail-highlight">Citraland Winangun</span>
+                        <p class="detail-text">SKYPARK SP 03/21</p>
+                        <div class="map-container"><iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d419.2471770973514!2d124.84864974367312!3d1.431106766114541!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x32877300784fff9d%3A0xbbfb382643481398!2sSKYPARK%20SP03%2F21!5e0!3m2!1sid!2sid!4v1787746041106!5m2!1sid!2sid" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <footer class="footer">
+            <p class="footer-quote">"See You at my party"</p>
+            <p>© 2026 • Kenzie's Birthday Celebration</p>
+        </footer>
+    </main>
+
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const guestName = urlParams.get('to');
+        if (guestName) document.getElementById('guestName').textContent = decodeURIComponent(guestName);
+
+        const cover = document.getElementById('cover'), btnOpen = document.getElementById('btnOpen');
+        const mainContent = document.getElementById('mainContent'), bgMusic = document.getElementById('bgMusic');
+        document.body.classList.add('no-scroll');
+
+        btnOpen.addEventListener('click', () => {
+            cover.classList.add('open');
+            document.body.classList.remove('no-scroll');
+            mainContent.style.opacity = '1';
+            bgMusic.muted = false; bgMusic.volume = 0.35;
+            bgMusic.play().catch(() => console.log('Audio autoplay blocked'));
+        });
+
+        const target = new Date('2026-09-05T15:00:00+07:00').getTime();
+        function updateCD() {
+            const diff = target - Date.now();
+            if(diff <= 0) { ['d','h','m','s'].forEach(id => document.getElementById(id).textContent='00'); return; }
+            document.getElementById('d').textContent = String(Math.floor(diff/864e5)).padStart(2,'0');
+            document.getElementById('h').textContent = String(Math.floor((diff%864e5)/36e5)).padStart(2,'0');
+            document.getElementById('m').textContent = String(Math.floor((diff%36e5)/6e4)).padStart(2,'0');
+            document.getElementById('s').textContent = String(Math.floor((diff%6e4)/1e3)).padStart(2,'0');
+        }
+        setInterval(updateCD, 1000); updateCD();
+    </script>
+</body>
+</html>
